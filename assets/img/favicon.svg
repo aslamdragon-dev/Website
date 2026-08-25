@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#08192B"/>
+  <text x="16" y="22" text-anchor="middle"
+        font-family="Jost, 'Century Gothic', sans-serif"
+        font-size="18" font-weight="300" letter-spacing="0.5"
+        fill="#8FCBD8">A</text>
+</svg>
