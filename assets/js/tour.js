@@ -51,19 +51,30 @@
      lengths (150 / 110 / 70 / 30) fans the labels up and away from each other,
      so the gaps between the dots stop mattering.
 
-     Note that a longer leader is not automatically safer. Artura's dot sits
-     well below Pamplemousses', so lengthening Artura's leader carries its
-     label up TOWARDS Pamplemousses. Pamplemousses is lifted to 100 instead,
-     which opens the gap rather than closing it.
+     The eastern pair crowds the same way. Pointe aux Piments and Turtle Bay
+     sit 0.156 rad apart — about 70px on screen at the tour framing — while
+     "Pointe aux Piments" alone is 172px wide, so equal leaders would bury one
+     label under the other. 110 and 40 fan them apart vertically instead.
+
+     Note that a longer leader is not automatically safer. Where one dot sits
+     below another, lengthening the lower one's leader carries its label UP
+     towards its neighbour; lifting the upper one opens the gap instead. Check
+     which way the dots lie before changing a value.
      ---------------------------------------------------------------------- */
   var LANDMARKS = [
     { yaw: -1.4635, pitch: -0.0250, label: "Coin de Mire",    lead: 150 },
     { yaw: -1.3946, pitch: -0.0080, label: "Mont Choisy",     lead: 110 },
     { yaw: -1.2293, pitch: -0.0056, label: "Grand Baie",      lead:  70 },
-    { yaw: -1.1509, pitch:  0.0168, label: "Trou aux Biches", lead:  30 },
-    { yaw: -0.0330, pitch:  0.1494, label: "Artura",          primary: true,
-      tagline: "Resorts · Clubhouse · Concierge" },
-    { yaw:  1.0245, pitch: -0.0040, label: "Port Louis",      lead:  40 }
+    /* side "left" keeps this label clear of the Artura lockup, which is 426px
+       wide and centred on its pin — at fov 1.90 the two collided by 24px with
+       the label on its default side. Lifting it on a longer leader also clears,
+       but only by 3.5px; flipping it leaves 21px. */
+    { yaw: -1.1509, pitch:  0.0168, label: "Trou aux Biches", lead:  30,
+      side: "left" },
+    { yaw: -0.0330, pitch:  0.1494, label: "Artura Resorts",  primary: true,
+      tagline: "Clubhouse & Concierge" },
+    { yaw:  1.0089, pitch:  0.0523, label: "Pointe aux Piments", lead: 110 },
+    { yaw:  1.1650, pitch:  0.0360, label: "Turtle Bay",      lead:  40 }
   ];
 
   /* --- Site boundary -----------------------------------------------------

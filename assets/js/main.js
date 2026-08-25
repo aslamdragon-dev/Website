@@ -56,8 +56,10 @@
   }
 
   /* How large the title sits on the splash. Fitted to the viewport rather than
-     hard-coded per breakpoint, because the tagline is wider than the name and
-     it is the tagline that runs out of room first. */
+     hard-coded per breakpoint, because whichever line is widest is what runs
+     out of room first — since the name became "Artura Resorts" that is the
+     name line (436px against the tagline's 430px), where it used to be the
+     tagline. Measuring rather than assuming is what makes that swap harmless. */
   function splashScale(r) {
     if (!r.w) return 1.6;
     var byWidth = (window.innerWidth * 0.33) / r.w;

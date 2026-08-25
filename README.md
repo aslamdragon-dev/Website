@@ -25,8 +25,8 @@ viewport. Verified: the core centre measures identically on both screens, with
 only the scale differing.
 
 What makes the landing invisible: both the flying title and the pin's label are
-the **same `.lockup` component** — ARTURA over `Resorts · Clubhouse · Concierge`,
-laid out to match the brand document. Sharing one class makes the typographic
+the **same `.lockup` component** — ARTURA RESORTS over `Clubhouse & Concierge`.
+Sharing one class makes the typographic
 match structural rather than two rules someone has to remember to keep in step.
 The flight ends at `scale(1)`, so the flying text lands pixel-for-pixel on the
 real label, which fades in as the flying copy disappears.
@@ -41,14 +41,17 @@ it.
 
 So the flight measures the **core**, not the whole lockup, and then backs out the
 core's offset within the lockup — the transform positions the lockup's top-left,
-which is not necessarily the core's. Right now the place line is the widest line
-in the block, so that offset is worth handling rather than assuming zero. Add
-another line to the title card and the flight keeps working.
+which is not necessarily the core's. Right now the name line is the widest in the
+block, so that offset happens to measure zero — but it is measured, not assumed,
+which is why it survived the rename. Add another line to the title card and the
+flight keeps working.
 
 Positioning is entirely by `transform` from a `0,0` origin, so the move is a
 single interpolation and stays correct at any viewport size. The splash scale is
-computed from the viewport rather than hard-coded per breakpoint, because the
-tagline is wider than the name and it is the tagline that runs out of room first.
+computed from the viewport rather than hard-coded per breakpoint, because
+whichever line is widest runs out of room first — since the name became "Artura
+Resorts" that is the name line (436px against the tagline's 430px), where it used
+to be the tagline.
 
 One subtlety in `primaryLabelTarget()`: the pin's label is centred above the
 marker using `translate(-50%, -100%)`, and a transform is invisible to
@@ -201,12 +204,15 @@ literal instruction rather than a considered choice — say if it should be hidd
 there too.
 
 **Seven landmarks, all picked from the panorama:** Coin de Mire, Mont Choisy,
-Trou aux Biches, Grand Baie, Artura, Pamplemousses, Port Louis. Artura carries
-`primary: true`, which gives it a larger dot in lagoon blue and a larger label —
-it is the estate, not a distant view.
+Grand Baie, Trou aux Biches, Artura, Pointe aux Piments, Turtle Bay. Artura
+carries `primary: true`, which gives it a larger dot in lagoon blue and a larger
+label — it is the estate, not a distant view.
 
-Two spellings were corrected from how they were sent: **Mont Choisy** (not "Mon
-choisy") and **Pamplemousses** (not "Pamplemousse").
+Port Louis was removed. Pointe aux Piments and Turtle Bay replaced it, both on
+the coast to the east.
+
+One spelling was corrected from how it was sent: **Mont Choisy** (not "Mon
+choisy").
 
 ### Marker shape and crowding
 
@@ -292,10 +298,10 @@ labels apart (ignored for the pin):
 |---|---|
 | Coin de Mire | 150 |
 | Mont Choisy | 110 |
-| Pamplemousses | 100 |
+| Pointe aux Piments | 110 |
 | Grand Baie | 70 |
-| Port Louis | 40 |
-| Trou aux Biches | 30 |
+| Turtle Bay | 40 |
+| Trou aux Biches | 30, `side: "left"` |
 | Artura | — pin |
 
 The four northern landmarks crowd on the horizon — Coin de Mire and Mont Choisy
@@ -304,18 +310,38 @@ are several times wider than that. Stepped leader lengths (150 / 110 / 70 / 30)
 fan their labels up and away from one another, so the gaps between the dots stop
 mattering.
 
-**A longer leader is not automatically safer.** Artura's dot sits well below
-Pamplemousses', so lengthening Artura's leader carries its label *up towards*
-Pamplemousses. Pamplemousses is lifted to 100 instead, which opens the gap
-rather than closing it. Check the direction before changing a value.
+The eastern pair crowds the same way. Pointe aux Piments and Turtle Bay sit
+0.156 rad apart — about 70px on screen at the tour framing — while "Pointe aux
+Piments" alone measures 172px wide. 110 and 40 fan them apart vertically, which
+leaves 43px of clear air between the two labels at the tour framing.
 
-`side: "left"` puts a label on the other side of its leader, for a landmark near
-the right edge of the frame. Nothing uses it at present.
+**A longer leader is not automatically safer.** Where one dot sits below
+another, lengthening the lower one's leader carries its label *up towards* its
+neighbour; lifting the upper one opens the gap instead. Check which way the dots
+lie before changing a value.
 
-Verified free of overlap by sweeping the full zoom range (0.5–1.90) across yaw
-and six pitch values. Tightest clearance anywhere is 26px, between Mont Choisy
-and Grand Baie at fov 1.62. **If you add or move a landmark, re-run that check** —
-the northern cluster has little slack.
+`side: "left"` puts a label on the other side of its leader. **Trou aux Biches
+uses it**, and has to: the Artura lockup is 426px wide and centred on its pin, so
+at fov 1.90 the two labels collided by 24px with Trou aux Biches on its default
+side. Lengthening its leader to 190 also clears, but by only 3.5px — flipping it
+leaves 21px, which is why the flip won.
+
+That collision appeared when the name line became "Artura Resorts": the lockup
+went from 341px wide to 426px, and a centred label spreads half of any growth
+onto each side. **Widening the lockup is never a purely typographic change** —
+re-run the overlap check after any edit to the brand text.
+
+Verified free of overlap by sweeping the full zoom range (0.5–1.90) across yaw in
+0.02 rad steps and six pitch values, at 1280×720 — **24,211 visible label pairs,
+zero overlaps.** Tightest clearance anywhere is 21.2px, between Mont Choisy and
+Grand Baie at fov 1.90. **If you add or move a landmark, or change the brand
+text, re-run that check** — both clusters have little slack.
+
+The check measures each label by cloning it outside its Marzipano hotspot and
+computing screen positions from `coordinatesToScreen`, rather than reading the
+live hotspots. That is deliberate: while the tab is not compositing, Marzipano
+reports a view size of 0×0 and leaves hotspot wrappers unpositioned, so every
+label measures 0×0 and the check silently passes without testing anything.
 
 No unverified text appears on either screen.
 
